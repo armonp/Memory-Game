@@ -107,7 +107,7 @@ h1 {
     float: right;
     cursor: pointer;
 }
-.modal {
+.modal { /*modal styles from w3schools.com */
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */

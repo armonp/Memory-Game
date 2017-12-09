@@ -3,10 +3,10 @@
  */
 var icons = ['bicycle', 'leaf', 'cube', 'anchor', 'paper-plane-o', 'bolt', 'diamond', 'bomb', 'bicycle', 'leaf', 'cube', 'anchor', 'paper-plane-o', 'bolt', 'diamond', 'bomb'];
 var matches = 0;
-var time;
+var timer;
 var openCards = [];
 var moves = 0;
-var gameStart = false;
+var turn = 0;
 var rating = "3";
 
 /*
@@ -41,12 +41,12 @@ function createGrid() {
 /* set up the event listener for a card. If a card is clicked, display the card's symbol. Event listner only runs if array has less two elements or less */
 function findMatch() {
     $('.card').click(function () {
+        turn++;
         if (openCards.length <= 2) {
             var card = $(this);
             $(this).addClass('open show');
             /*  add the card to a *list* of "open" cards */
             openCards.push(card);
-            gameStart = true;
             /*  if the list already has another card, check to see if the two cards match */
             /*  if the cards do match, lock the cards in the open position */
             if (openCards.length == 2 && openCards[0][0].children[0].className == openCards[1][0].children[0].className) {
@@ -72,7 +72,7 @@ function findMatch() {
                 }, 500);
             }
         }
-        
+
     })
 }
 //Rate performance.
@@ -82,7 +82,7 @@ function rateGame() {
         $('#star3').addClass("fa-star-o");
         rating = "2";
     }
-    if (moves > 24) {
+    if (moves > 22) {
         $('#star2').removeClass("fa-star");
         $('#star2').addClass("fa-star-o");
         rating = "1";
@@ -91,7 +91,8 @@ function rateGame() {
 
 //if all cards have matched, display a message with the final score
 function winModal() {
-    if (matches === 1) {
+    if (matches === 8) {
+        $('.rating').html(rating);
         $('#myModal').css("display", "block");
         $(".close").click(function () {
             $('#myModal').css("display", "none");
@@ -102,19 +103,24 @@ function winModal() {
 $(".restart").click(function () {
     location.reload()
 });
-//TODO: timer
+//game timer
 function startTime() {
-    $(".card").click(function () {
-        var sec = 0;
-        function time(val) { return val > 9 ? val : "0" + val; }
-        timer = setInterval(function () {
-            $(".seconds").html(time(++sec % 60));
-            $(".minutes").html(time(parseInt(sec / 60, 10)));
-        }, 1000);
-    }
-    )
+    $(".card").one("click", function () {
+        if (turn === 1) {
+            var sec = 0;
+            function time(val) { return val > 9 ? val : "0" + val; }
+            timer = setInterval(function () {
+                $(".seconds").html(time(++sec % 60));
+                $(".minutes").html(time(parseInt(sec / 60, 10)));
+                if (matches === 8) {
+                    clearInterval(timer);
+                    return timer;
+                }
+            }, 1000);
+        }
+    })
 }
+
 createGrid();
 findMatch();
 startTime();
-
