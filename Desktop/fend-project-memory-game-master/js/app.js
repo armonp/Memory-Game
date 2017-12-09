@@ -3,9 +3,11 @@
  */
 var icons = ['bicycle', 'leaf', 'cube', 'anchor', 'paper-plane-o', 'bolt', 'diamond', 'bomb', 'bicycle', 'leaf', 'cube', 'anchor', 'paper-plane-o', 'bolt', 'diamond', 'bomb'];
 var matches = 0;
-var time = 0;
+var time;
 var openCards = [];
 var moves = 0;
+var gameStart = false;
+var rating = "3";
 
 /*
  * Display the cards on the page
@@ -29,17 +31,13 @@ function shuffle(array) {
 
     return array;
 };
-$(document).ready(function () {
-
-    var cardList = shuffle(icons);
+function createGrid() {
+    let cardList = shuffle(icons);
     //Loop through each card and create its HTML then add it to the page
-    function arrangeCards() {
-        for (var i = 0; i < cardList.length; i++) {
-            ($(".deck").append($('<li class="card"><i class = "fa fa-' + cardList[i] + '"></i></li>'))
-            )
-        }
+    for (var i = 0; i < cardList.length; i++) {
+        $(".deck").append('<li class="card"><i class = "fa fa-' + cardList[i] + '"></i></li>');
     }
-});
+}
 /* set up the event listener for a card. If a card is clicked, display the card's symbol. Event listner only runs if array has less two elements or less */
 function findMatch() {
     $('.card').click(function () {
@@ -48,50 +46,77 @@ function findMatch() {
             $(this).addClass('open show');
             /*  add the card to a *list* of "open" cards */
             openCards.push(card);
-        };
-
-        /*  if the list already has another card, check to see if the two cards match */
-        /*  if the cards do match, lock the cards in the open position */
-        if (openCards.length == 2 && openCards[0][0].children[0].className == openCards[1][0].children[0].className) {
-            openCards = [];
-            /*    + increment the move counter and display it on the page*/
-            moves++;
-            $('.moves').text(moves);
-            matches++;
-        }
-        /*  if the cards do not match, remove the cards from the list and hide the card's symbol */
-        else if (openCards.length == 2 && openCards[0][0].children[0].className != openCards[1][0].children[0].className) {
-            setTimeout(function () {
-
-                openCards[0].removeClass('open show');
-                openCards[1].removeClass('open show');
+            gameStart = true;
+            /*  if the list already has another card, check to see if the two cards match */
+            /*  if the cards do match, lock the cards in the open position */
+            if (openCards.length == 2 && openCards[0][0].children[0].className == openCards[1][0].children[0].className) {
                 openCards = [];
                 /*    + increment the move counter and display it on the page*/
                 moves++;
                 $('.moves').text(moves);
-            }, 500)
+                rateGame();
+                matches++;
+            }
+            /*  if the cards do not match, remove the cards from the list and hide the card's symbol */
+            else if (openCards.length == 2 && openCards[0][0].children[0].className != openCards[1][0].children[0].className) {
+                setTimeout(function () {
+
+                    openCards[0].removeClass('open show');
+                    openCards[1].removeClass('open show');
+                    openCards = [];
+                    /*    + increment the move counter and display it on the page*/
+                    moves++;
+                    $('.moves').text(moves);
+                    rateGame();
+                }, 500);
+            }
         }
+        
     })
-    }
+}
 //Rate performance.
-function rating(moves) {
-    if (moves > 3) {
-        ($('.stars').children("li: first").remove())
-        if (moves > 30) {
-            ($('.stars').children("li: first").remove())
-        }
+function rateGame() {
+    if (moves > 16) {
+        $('#star3').removeClass("fa-star");
+        $('#star3').addClass("fa-star-o");
+        rating = "2";
+    }
+    if (moves > 24) {
+        $('#star2').removeClass("fa-star");
+        $('#star2').addClass("fa-star-o");
+        rating = "1";
     }
 }
 
-//if all cards have matched, display a message with the final score
+//TODO: if all cards have matched, display a message with the final score
 var modal = $('#myModal');
 var span = $(".close")[0];
-function winModal () {
+function winModal() {
     if (matches === 1) {
-    $(".modal-content").html('<p>Congratulations!<br>Time: ' + time + '<br>Stars:  ' + stars.length + '</p>');
 
-    modal.style.display = "block";
-    span.onclick = function () {
-        modal.style.display = "none";
-    }}}
-//reset game when reload button is click (in progress)    
+        modal.style.display = "block";
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    }
+}
+//reset game when reload button is click    
+$(".restart").click(function () {
+    location.reload()
+});
+//TODO: timer
+function startTime() {
+    $(".card").click(function () {
+        var sec = 0;
+        function time(val) { return val > 9 ? val : "0" + val; }
+        timer = setInterval(function () {
+            $(".seconds").html(time(++sec % 60));
+            $(".minutes").html(time(parseInt(sec / 60, 10)));
+        }, 1000);
+    }
+    )
+}
+createGrid();
+findMatch();
+startTime();
+winModal();
