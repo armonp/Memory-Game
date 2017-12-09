@@ -53,9 +53,10 @@ function findMatch() {
                 openCards = [];
                 /*    + increment the move counter and display it on the page*/
                 moves++;
+                matches++;
                 $('.moves').text(moves);
                 rateGame();
-                matches++;
+                winModal();
             }
             /*  if the cards do not match, remove the cards from the list and hide the card's symbol */
             else if (openCards.length == 2 && openCards[0][0].children[0].className != openCards[1][0].children[0].className) {
@@ -88,16 +89,13 @@ function rateGame() {
     }
 }
 
-//TODO: if all cards have matched, display a message with the final score
-var modal = $('#myModal');
-var span = $(".close")[0];
+//if all cards have matched, display a message with the final score
 function winModal() {
     if (matches === 1) {
-
-        modal.style.display = "block";
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
+        $('#myModal').css("display", "block");
+        $(".close").click(function () {
+            $('#myModal').css("display", "none");
+        });
     }
 }
 //reset game when reload button is click    
@@ -119,4 +117,4 @@ function startTime() {
 createGrid();
 findMatch();
 startTime();
-winModal();
+
