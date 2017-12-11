@@ -42,7 +42,7 @@ function createGrid() {
 function findMatch() {
     $('.card').click(function () {
         turn++;
-        if (openCards.length <= 2) {
+        if (openCards.length < 2) {
             var card = $(this);
             $(this).addClass('open show');
             /*  add the card to a *list* of "open" cards */
