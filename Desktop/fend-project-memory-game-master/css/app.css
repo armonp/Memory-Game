@@ -143,3 +143,7 @@ h1 {
     text-decoration: none;
     cursor: pointer;
 }
+@viewport{
+    zoom: 1.0;
+    width: extend-to-zoom;
+}
